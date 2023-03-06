@@ -82,8 +82,13 @@ if image is not None:
     img = np.mean(img, axis=2)
     img = np.reshape(img, (1, -1))
 
+    # Make sure the image has the same shape as the training data
+    if img.shape[1] < X_train.shape[1]:
+        img = np.hstack((img, np.zeros((1, X_train.shape[1] - img.shape[1]))))
+
     # Make a prediction on the input image
     pred = model.predict(img)
 
     # Display the prediction
     st.write('Prediction:', pred[0])
+
