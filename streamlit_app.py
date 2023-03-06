@@ -4,7 +4,12 @@ import math
 import pandas as pd
 import streamlit as st
 
+import streamlit as st
 import numpy as np
+from sklearn.datasets import load_digits
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 
 """
@@ -41,19 +46,44 @@ with st.echo(code_location='below'):
         .encode(x='x:Q', y='y:Q'))
     
 
-st.title('Random Scatter Plot')
 
-# Generate some random data
-n_points = st.slider('Select the number of points:', 10, 1000, 100)
-x = np.random.randn(n_points)
-y = np.random.randn(n_points)
 
-# Create a Pandas dataframe to hold the data
-df = pd.DataFrame({'x': x, 'y': y})
+st.title('Handwritten Digit Classification')
 
-# Plot the data using Matplotlib
-fig, ax = plt.subplots()
-ax.scatter(df['x'], df['y'])
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-st.pyplot(fig)
+# Load the digits dataset
+digits = load_digits()
+
+# Split the data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(digits.data, digits.target, test_size=0.2, random_state=42)
+
+# Train a logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Compute the accuracy of the model
+accuracy = accuracy_score(y_test, y_pred)
+
+# Compute the confusion matrix of the model
+cm = confusion_matrix(y_test, y_pred)
+
+# Display the accuracy and confusion matrix
+st.write('Accuracy:', accuracy)
+st.write('Confusion matrix:', cm)
+
+# Allow the user to input a digit image
+image = st.file_uploader('Upload an image of a digit:', type='png')
+
+if image is not None:
+    # Load the image and preprocess it
+    img = plt.imread(image)
+    img = np.mean(img, axis=2)
+    img = np.reshape(img, (1, -1))
+
+    # Make a prediction on the input image
+    pred = model.predict(img)
+
+    # Display the prediction
+    st.write('Prediction:', pred[0])
