@@ -4,6 +4,9 @@ import math
 import pandas as pd
 import streamlit as st
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 """
 # Welcome to Streamlit!
 
@@ -36,3 +39,21 @@ with st.echo(code_location='below'):
     st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
         .mark_circle(color='#0068c9', opacity=0.5)
         .encode(x='x:Q', y='y:Q'))
+    
+
+st.title('Random Scatter Plot')
+
+# Generate some random data
+n_points = st.slider('Select the number of points:', 10, 1000, 100)
+x = np.random.randn(n_points)
+y = np.random.randn(n_points)
+
+# Create a Pandas dataframe to hold the data
+df = pd.DataFrame({'x': x, 'y': y})
+
+# Plot the data using Matplotlib
+fig, ax = plt.subplots()
+ax.scatter(df['x'], df['y'])
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+st.pyplot(fig)
