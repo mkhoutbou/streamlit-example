@@ -1,0 +1,1 @@
+the following text is a csv file connent. I need your to list all columns. and display it in a human readable format. and describe it and generate a code for analytic base on it. don't foget the text is a content of a csv file. here it is
