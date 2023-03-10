@@ -1,41 +1,31 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import seaborn as sns
+import numpy as np
+import folium
+from geopy.geocoders import Nominatim
+from streamlit_folium import folium_static
 
-# Load the CSV file
-csv_file = 'Cooperative Assessment For Streamlit.csv'
+# Generate random data
+np.random.seed(42)
+countries = ['United States', 'China', 'India', 'Brazil', 'Pakistan', 'Nigeria', 'Bangladesh', 'Russia', 'Mexico', 'Japan']
+num_females = np.random.randint(1000000, 100000000, size=len(countries))
+data = pd.DataFrame({'Country': countries, 'Number of Females': num_females})
 
+# Create Streamlit app
+st.title('Random Data Generator')
+st.write('This app generates random data with country name and number of female, and displays the data on a map.')
+st.write('### Random Data')
+st.dataframe(data)
 
-# Load data
-@st.cache_data
-def load_data():
-    df = pd.read_csv(csv_file)
-    return df
-
-df = load_data()
-
-# Show data
-if st.checkbox("Show raw data"):
-    st.write(df)
-
-# Show summary statistics
-if st.checkbox("Show summary statistics"):
-    st.write(df.describe())
-
-# Show correlation heatmap
-if st.checkbox("Show correlation heatmap"):
-    st.write(sns.heatmap(df.corr(), annot=True, cmap="coolwarm"))
-
-# Show scatter plot
-x_values = st.selectbox("Select x-axis column for scatter plot", df.columns)
-y_values = st.selectbox("Select y-axis column for scatter plot", df.columns)
-if st.button("Generate scatter plot"):
-    st.write(f"Scatter plot between {x_values} and {y_values}")
-    st.write(px.scatter(df, x=x_values, y=y_values))
-
-# Show bar chart
-column_to_plot = st.selectbox("Select column to plot", df.columns)
-if st.button("Generate bar chart"):
-    st.write(f"Bar chart of {column_to_plot}")
-    st.write(px.bar(df, x=column_to_plot, y=y_values))
+# Show data on a map
+st.write('### Map')
+geolocator = Nominatim(user_agent='my-app')
+m = folium.Map(location=[0, 0], zoom_start=2)
+for i in range(len(data)):
+    country = data.loc[i, 'Country']
+    num_females = data.loc[i, 'Number of Females']
+    tooltip = f"{country}: {num_females:,} females"
+    location = geolocator.geocode(country)
+    if location is not None:
+        folium.Marker(location=[location.latitude, location.longitude], tooltip=tooltip).add_to(m)
+folium_static(m)
