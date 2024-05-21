@@ -1,6 +1,7 @@
-altair
+# altair
 pandas
-streamlit
-matplotlib
-numpy
-scikit-learn
+# streamlit
+# matplotlib
+# numpy
+# scikit-learn
+jupyter
